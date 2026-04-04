@@ -16,7 +16,7 @@
 3. **`new ZohoClient({ clientId, refreshToken, clientSecret, domain })`** — OAuth refresh for CRM API.
 4. **Loop** every **120s** (2 minutes):
    - **`Promise.all(cycles.map(cycle => cycle.run(database, zohoClient)))`** — Each cycle knows a **Zoho module** and **table name**; pulls remote records and upserts locally (or equivalent—see each cycle file).
-   - Per-cycle errors logged; **Sentry** can capture global failures.
+   - Per-cycle and loop-level errors are logged via `console.error`. Sentry is initialized but only reports data-validation warnings from the cycle layer, not runtime errors in the main loop.
 
 **Features controlled:** Periodic **CRM ↔ Postgres** synchronization without blocking web traffic.
 
