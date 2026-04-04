@@ -6,7 +6,7 @@
 |------|------|
 | Layout (server) | `apps/web/src/app/dashboard/member/layout.tsx` |
 | Shell (client) | `apps/web/src/components/members/dashboard/MemberDashboardLayout.tsx` |
-| Feature routes | `apps/web/src/app/dashboard/member/` — `services/`, `checkout/`, `settings/`, `inbox/`, etc. |
+| Feature routes | `apps/web/src/app/dashboard/member/` — `services/`, `checkout/`, `inbox/`, `jobs/`, `settings/`, `referrals/`, `help/` |
 | Member APIs (examples) | `apps/web/src/app/api/dashboard/member/jobs/rate/`, `apps/web/src/app/api/member/invoices/` |
 
 ## Behavior synopsis

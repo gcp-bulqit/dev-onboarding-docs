@@ -32,7 +32,7 @@
 
 **Configuration:** Server, edge, and client instrumentation files initialize Sentry. The `next.config.ts` includes `withSentryConfig` which routes browser Sentry requests through a Next.js rewrite (tunnel) to bypass ad blockers.
 
-**Error boundaries:** `error.tsx` and `global-error.tsx` both call `Sentry.captureException`. `GlobalErrorHandler.tsx` subscribes to `window` errors and unhandled rejections, applies allow/deny heuristics (e.g. Stripe iframe noise on staging), reports to Sentry, and may trigger `router.refresh` on certain HTTP errors.
+**Error boundaries:** `error.tsx` and `global-error.tsx` both call `Sentry.captureException`. `GlobalErrorHandler.tsx` subscribes to `window` errors and unhandled rejections, applies allow/deny heuristics (e.g. Stripe iframe noise on staging), reports to Sentry, and redirects to error pages on certain HTTP status codes.
 
 **Other capture points:** `validateEmailWithZeroBounce.ts`, `validatePhoneNumberAction.ts`, `LoadingStep.tsx` (onboarding), `worker-notifications/index.ts` (3 capture points), `worker-zoho-sync/cycle.ts` (data validation).
 

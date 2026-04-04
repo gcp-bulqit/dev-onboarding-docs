@@ -11,7 +11,7 @@
 
 ## What the configuration achieves
 
-- **`pnpm-workspace.yaml`** — Declares that every package under `apps/*` and `packages/*` (and `e2e-cypress` if present) is part of one workspace so dependencies can use `workspace:*` and installs are hoisted/deduped efficiently.
+- **`pnpm-workspace.yaml`** — Declares that every package under `apps/*` and `packages/*` (and `e2e-cypress`) is part of one workspace so dependencies can use `workspace:*` and installs are hoisted/deduped efficiently.
 - **`turbo.json`** — Defines named tasks (`build`, `dev`, `lint`, `check-types`, `test`, etc.), their **dependencies** between packages, inputs, and outputs so **Turbo** can parallelize work and cache artifacts; changing a file only rebuilds downstream dependents.
 - **Root `package.json` scripts** — `pnpm build` runs `turbo run build`; `pnpm dev` runs `turbo run dev`; `pnpm lint`, `pnpm check-types`, `pnpm test` fan out the same way. Worker deploy scripts (`deploy:worker-*`) prune the monorepo and invoke `flyctl` for specific apps.
 

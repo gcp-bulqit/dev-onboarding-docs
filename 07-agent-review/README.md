@@ -26,4 +26,4 @@ The `AGENTS.md` in this directory is a snapshot that has diverged from the repo 
 
 - **Useful for any developer:** Common commands, architecture overview, database migration workflow, testing conventions and safety warnings (integration tests truncate tables), PR guidelines.
 - **FW-specific process:** ClickUp task fix workflow, session checkpoint workflow, batch ordering, commit convention (`CU-{taskID}`). These are FutureWorks internal process and will not apply after handoff.
-- **GitNexus references:** The file includes a GitNexus MCP section referencing `.claude/skills/gitnexus/` skills. Five of six skill files exist on staging.
+- **GitNexus references:** The file includes a GitNexus MCP section referencing `.claude/skills/gitnexus/` skills. All six skill files exist on staging.

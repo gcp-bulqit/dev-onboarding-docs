@@ -15,7 +15,7 @@
 | Route | Step |
 |-------|------|
 | `/onboarding/homeowner/` | Intro |
-| `/onboarding/homeowner/account-setup` | Account setup (feature-flagged via `isPhaseTwoOnboardingEnabled()`) |
+| `/onboarding/homeowner/account-setup` | Account setup |
 | `/onboarding/homeowner/contact-info` | Contact information |
 | `/onboarding/homeowner/address` | Address search |
 | `/onboarding/homeowner/interest` | Service interest |
