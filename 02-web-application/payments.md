@@ -8,7 +8,6 @@
 | Member checkout | `apps/web/src/app/dashboard/member/checkout/` |
 | Vendor payouts / banking | `apps/web/src/app/dashboard/vendor/settings/payouts/` (and related) |
 | Stripe webhook | `apps/web/src/app/api/webhooks/stripe/route.ts` |
-| Vendor invoice (Stripe) | `apps/web/src/app/api/vendor/transactions/[id]/invoice/stripe/route.ts` |
 | Stripe server SDK wrapper | `apps/web/src/lib/stripe/` |
 | Payment / dunning library | `apps/web/src/lib/payments/` |
 | Payout batch library | `apps/web/src/lib/payouts/` |
@@ -16,58 +15,32 @@
 
 ## Server actions
 
-| Area | Path | Key actions |
-|------|------|-------------|
+| Area | Path | Scope |
+|------|------|-------|
 | Admin payments | `actions/admin/payments/` | Transactions, refunds, credits, payouts, financial metrics, export |
-| Member checkout | `actions/member/checkout/` | createPaymentIntent, createSetupIntent, processCheckout, applyCoupon, validateCoupon, createOrder |
-| Member payment methods | `actions/member/payment-methods/` | add, remove, setDefault, getPaymentMethods |
-| Vendor Connect | `actions/vendors/connect/` | startConnectOnboarding, checkConnectStatus, getStripeDashboardLink, refreshOnboardingLink |
-| Vendor payouts | `actions/vendors/payouts/` | getVendorPayouts, getPayoutDetails, getVendorBalance, setupPayoutMethod |
+| Member checkout | `actions/member/checkout/` | Payment intents, coupons, credits, order processing |
+| Member payment methods | `actions/member/payment-methods/` | Add, remove, set default |
+| Vendor Connect | `actions/vendors/connect/` | Stripe Connect onboarding, dashboard links, payout methods |
+| Vendor payouts | `actions/vendors/payouts/` | Payout history, balance, disbursement setup |
 
-## Stripe webhook (`api/webhooks/stripe/route.ts`)
+## Stripe webhook
 
-Handles incoming Stripe events for payment processing, subscription lifecycle, and payout tracking. Validates webhook signatures using the Stripe SDK directly (`getStripeClient().webhooks.constructEvent`).
+Handles incoming Stripe events for payment processing, subscription lifecycle, and payout tracking. Validates webhook signatures using the Stripe SDK directly.
 
 ## Temporal workflows
 
-Three payment-related workflows run on the Temporal worker:
+Three payment-related workflows run on the Temporal worker: payment dunning (retry failed payments with escalation), subscription billing (recurring cycle processing), and weekly payouts (batch vendor disbursements).
 
-| Workflow | Path | Purpose |
-|----------|------|---------|
-| payment-dunning | `packages/temporal-workflows/src/payment-dunning/` | Retry failed payments with escalating dunning |
-| subscription-billing | `packages/temporal-workflows/src/subscription-billing/` | Recurring billing cycle processing |
-| weekly-payouts | `packages/temporal-workflows/src/weekly-payouts/` | Batch vendor payout processing |
+## Key libraries
 
-## Stripe server SDK (`lib/stripe/`)
-
-| File | Purpose |
-|------|---------|
-| `client.ts` | Stripe SDK initialization |
-| `config.ts` | Stripe configuration |
-| `connect.ts` | Stripe Connect (vendor onboarding, account management) |
-| `payment-intents.ts` | PaymentIntent creation and management |
-| `payment-methods.ts` | Payment method CRUD |
-| `webhooks.ts` | Webhook signature verification |
-| `dashboard-url.ts` | Stripe dashboard link generation |
-| `types.ts` | Shared Stripe type definitions |
-
-## Payment library (`lib/payments/`)
-
-| File | Purpose |
-|------|---------|
-| `dunning-scheduler.ts` | Schedule retry attempts for failed payments |
-| `dunning.ts` | Dunning logic and escalation |
-| `failure-classification.ts` | Classify payment failure types for retry decisions |
-| `triggerServiceJobPayment.ts` | Initiate payment for completed service jobs |
-| `homeownerCoupons.ts` | Coupon application logic |
-| `homeownerCredits.ts` | Credit balance management |
-| `transactionDisplay.ts` | Transaction formatting for UI |
+- **`lib/stripe/`** — Server-side Stripe SDK wrapper for payment intents, payment methods, Connect accounts, and webhook verification.
+- **`lib/payments/`** — Dunning scheduler, failure classification, payment triggering, coupons, and credits.
+- **`lib/payouts/`** — Payout batch processing and scheduling.
 
 ## Behavior synopsis — `payment/confirm/page.tsx`
 
-- Client component using **`loadStripe`** (`@stripe/stripe-js`) with **`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`**.
-- **`useSearchParams`** reads **`setup_intent_client_secret`** / **`setup_intent`** or **`redirect_status`** (3DS / wallet returns).
-- **`stripe.retrieveSetupIntent`** — Confirms success/failure; on success stores **`payment_method` id** in **`sessionStorage`** as `savedPaymentMethodId` and redirects to **`/dashboard/member/checkout/payment?payment_confirmed=true`** after a short delay.
-- Renders loading/success/error UI with **`Card`** from the design system.
+- Client component using **`loadStripe`** with **`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`**.
+- Reads `setup_intent_client_secret` / `redirect_status` from search params to confirm SetupIntents (saved payment methods, 3DS / wallet returns).
+- On success, stores the payment method ID in `sessionStorage` and redirects to the checkout flow.
 
-**Features controlled:** Saving a **default payment method** for homeowner checkout (SetupIntents) and returning users cleanly into the **checkout** flow.
+**Features controlled:** Homeowner checkout, payment method management, vendor Connect onboarding and payouts, dunning and failure recovery, subscription billing, and financial reporting.
