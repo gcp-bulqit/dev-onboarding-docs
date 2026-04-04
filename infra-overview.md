@@ -88,6 +88,10 @@ graph LR
 
 ```
 
+**Service inventory notes:**
+
+- **BigQuery** is a Segment destination, not a direct code integration. Whether data flows there depends on Segment dashboard configuration.
+
 ## Deployment Model
 
 ```mermaid
