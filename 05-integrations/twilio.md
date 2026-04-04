@@ -1,17 +1,19 @@
 # Twilio
 
-## Paths
+## SDK packages
 
-| Item | Path |
-|------|------|
-| Domain package | `packages/messaging/` — Conversations, SMS, phone pool |
-| API routes | `apps/web/src/app/api/messaging/`, `apps/web/src/app/api/twilio/` |
-| Dashboards | `MemberDashboardLayout`, `VendorDashboardLayout` — `useTwilioContext`, `useConversations` |
+| Package | Usage |
+|---------|-------|
+| `twilio` | Server-side SDK (`packages/messaging/`) |
+| `@twilio/conversations` | Client-side Conversations JS SDK for in-app messaging |
 
-## Behavior synopsis
+## Key areas
 
-- **Conversations API** — Threaded chat between parties with optional **SMS** participants.
-- **Phone pool** — Allocates **proxy numbers** for SMS so personal numbers stay private.
-- **Webhooks** — `api/twilio/**` verifies signatures and updates conversation state on inbound events.
+- **Domain package** — `packages/messaging/` handles conversation lifecycle, SMS bridging, phone pool allocation, and vendor contact management. See [messaging.md](../04-shared-packages/messaging.md).
+- **API routes** — `apps/web/src/app/api/messaging/` for conversation CRUD, participant management, and media. `apps/web/src/app/api/twilio/` for webhook handling and voice proxy.
+- **Flex integration** — `apps/web/src/app/api/messaging/flex/` for Flex configuration and conversation bridging. A Flex plugin at `tools/flex-plugin/bulqit-escalation-join/` provides an escalation join button for support agents.
+- **Voice proxy** — `apps/web/src/app/api/twilio/voice/` handles voice call proxy callbacks.
+- **Front-end** — `TwilioConversationChat.tsx` renders the messaging UI. Dashboard layouts wire `useTwilioContext` and `useConversations` for inbox polling.
+- **Webhooks** — `api/twilio/conversations/webhook/` verifies signatures and updates conversation state on inbound events.
 
-**Features controlled:** **Inbox/messaging** UX for members and vendors, and **admin** messaging tooling.
+**Features controlled:** In-app messaging (member, vendor, support), SMS bridging with proxy numbers, voice proxy, Flex support escalation, and admin messaging diagnostics.

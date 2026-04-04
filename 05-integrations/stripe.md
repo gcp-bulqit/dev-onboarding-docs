@@ -1,13 +1,5 @@
 # Stripe
 
-## Environment
-
-| Variable | Purpose |
-|----------|---------|
-| `STRIPE_SECRET_KEY` | Server-side Stripe SDK |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Client-side Stripe.js |
-| `STRIPE_WEBHOOK_SECRET` | Webhook signature verification |
-
 ## SDK packages
 
 | Package | Usage |
