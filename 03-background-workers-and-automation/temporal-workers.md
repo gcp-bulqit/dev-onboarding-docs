@@ -22,8 +22,22 @@
 - **`setNotificationLogger`** — Bridges logging to `@bulqit/notifications` for activities that emit notifications.
 - **Worker** runs until process exit; connects to **Temporal Cloud** (or compatible server).
 
-**Features controlled:** Async business processes—examples include **notification processing**, **subscription billing**, **payment dunning**, **weekly payouts**, **vendor score updates**, **messaging activation** (see `packages/temporal-workflows/src/all_workflows.ts` exports).
+## Boot-time initialization
+
+After creating the Worker instance but before it begins accepting tasks, `worker.ts` performs initialization:
+
+- **Starts `processNotificationEventsContinuousWorkflow`** — a long-running workflow that polls for pending notification events every 5 seconds. Started as a singleton (idempotent).
+- **Creates cron schedules** (idempotent, skips if already created):
+  - Notification bucket schedules (EST timezone crons)
+  - Vendor score recalculation
+  - Payment dunning
+  - Subscription billing
+  - Weekly payouts
+
+All schedule creation is wrapped in try/catch so an existing schedule does not prevent the worker from starting.
 
 ## Deployment
 
 Root `package.json` — `deploy:worker-temporal*` scripts prune the monorepo and deploy this image to Fly.io.
+
+**Features controlled:** Async business processes — notification event processing (continuous), notification bucket delivery (scheduled), subscription billing, payment dunning, weekly payouts, vendor score updates, messaging activation.
