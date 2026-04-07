@@ -4,6 +4,8 @@ This folder holds **onboarding and developer documentation** for new contributor
 
 Component-level UI documentation is maintained separately in [STORYBOOK.md](./STORYBOOK.md).
 
+A video overview and walkthrough of the major sections is maintained in [VIDEO_OVERVIEW.md](./VIDEO_OVERVIEW.md)
+
 ---
 
 ## Table of contents

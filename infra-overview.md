@@ -171,3 +171,32 @@ graph TD
     style auto fill:#e8f5e9,stroke:#4caf50
     style manual fill:#fff3e0,stroke:#ff9800
 ```
+# Turbo Build Schema
+
+```mermaid
+flowchart LR
+  subgraph web [apps_web]
+    Next[Nextjs_bulqit-website]
+  end
+  subgraph pkgs [packages]
+    DB["@bulqit/database"]
+    SAN["@bulqit/sanity-cms"]
+    NOT["@bulqit/notifications"]
+    MSG["@bulqit/messaging"]
+    TW["@bulqit/temporal-workflows"]
+  end
+  subgraph workers [apps_workers]
+    TWkr[temporal-workers]
+    NWkr[worker-notifications]
+    ZWkr[worker-zoho-sync]
+  end
+  Next --> DB
+  Next --> SAN
+  Next --> NOT
+  Next --> MSG
+  Next --> TW
+  TWkr --> TW
+  TWkr --> NOT
+  NWkr --> NOT
+  ZWkr --> DB
+```
