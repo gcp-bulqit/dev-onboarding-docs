@@ -7,8 +7,12 @@ roll back if it didn't.
 
 | Doc | Topics |
 |-----|--------|
+| [deployment-workflow.md](./deployment-workflow.md) | End-to-end lifecycle: branch model, PR gates, merge triggers, CMS migrations, changeset versioning, staging vs production |
 | [vercel-web.md](./vercel-web.md) | Web app on Vercel: auto-deploy, preview URLs, health checks, rollback, env vars, CI pipelines |
 | [fly-io-workers.md](./fly-io-workers.md) | Workers on Fly.io: deploy triggers, manual deploy, verify, rollback, machine config, env vars per worker |
+
+Read `deployment-workflow.md` first for the big picture. The other
+two cover per-component mechanics.
 
 ## Quick reference
 
