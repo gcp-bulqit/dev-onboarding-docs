@@ -1,0 +1,57 @@
+https://app.clickup.com/9011577990/v/dc/8cj3h46-35491
+
+Homeowner and Vendor Capturing Partial Registration Data to enable abandoning and continuing registration:
+- on each step:
+    - trying to end registration by closing tab or refreshing window
+        - provide any data in form
+        - then try to close tab or refresh window
+        - then window asking if you are sure appears while BE captures partial data and saves it in db with public token
+        - user can cancel the warning window and simply continue registering
+    - submit registration step
+        - provide any data in form
+        - click continue button
+        - BE captures partial data and saves it in db with public token
+    - going back
+        - provide any data in form
+        - click "back" button if there is any (exists in Vendor registration flow)
+        - BE captures partial data and saves it in db with public token
+- continue partially captured registration
+    - if user started registration without finishing it and BE captured partial data in db with public token (see previous scenarios)
+    - using columns from db for captured partially registered user (for example vendor):
+        - from column `partial_registration_step_url` (example value: `/register/vendor/about-you`)
+        - column `public_token` (example value: `41e79ba4-3593-41df-bc54-5f6e9a24d4dc`)
+    - values from db can be used to create url to continue registration (for example: `https://www.bulqit.com/register/vendor/about-you?token=41e79ba4-3593-41df-bc54-5f6e9a24d4dc`)
+    - then user goes to the url
+        - if the link has wrong `partial_registration_step_url` then using `public_token` we will still redirect user to correct step
+        - but if user tries a link for wrong registration flow then they won't be redirected (for example user uses homeowner registration link with vendor partial captured registration data public token and then the partially registration data won't be loaded and user will be redirected to the first step of homeowner registration)
+    - application using token from url retrieves from db all partially captured registration data
+    - user can continue registration as if they have never abandoned it, user can continue registration or even abandon it once more to continue later
+- not duplicating registrations
+    - during registration flow user can put data, change it, progress in flow, go back (available in vendor registration) or stop registration and continue using link with public token - for all those scenarios DB should record only single homeowner/vendor and update its data accordingly, no homeowner/vendor duplication should appear
+- Continue abandoned registration on /vendors
+    - user types business name
+    - Google Places API suggests some places
+    - user selects one
+    - user closes tab, is warned about changes but continues with closing tab
+    - user continues registration with public token from db
+    - user does not change business name and does not select any other option, just proceeds with submit button
+    - user still can see details and photos of their business - because in partial registration we've stored google place id and when continuing registration we're using it to once more fetch all the place's details
+- finishing registration
+    - after registration is finished user won't be able to go back and update registered data using public token
+    - on FE data is cleared and user can start new registration from step one with no saved data from previous registration
+- admin access to registrations
+    - admin can see registration data on each step in homeowners/vendors admin views
+    - admin can see both partially captured and finished registrations
+- database:
+    - `vendors` and `home_owners` tables have 3 special columns:
+        - `public_token` - unique random uuid key used to continue abandoned registration
+        - `partially_registered` - boolean field - if `true` user can go back to abandoned registration and continue
+        - `partial_registration_step_url` - url to the step that user should be redirected to in case user wants to continue abandoned registration
+- refreshed registration or opened in new tab
+    - without public token in url when user refreshes page or opens app in different tab or browser then user's registration is not continued
+    - no registration data is saved in browser to be shared between tabs
+    - once user refreshes application user goes back to step one of current registration
+- redirecting from starting in later steps
+    - user tries to access later (second, third, up to last one) step without token in url or finishing the first step
+    - loader is displayed because app tries to load user's partially captured registration data but without token in url it cannot do anything
+    - user is redirected to the first step of the homeowner or vendor flow (depends which flow user was trying to do)
